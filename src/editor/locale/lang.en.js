@@ -160,6 +160,7 @@ export default {
     undo: 'Undo',
     redo: 'Redo',
     tool_source: 'Edit Source',
+    tool_source_dynamic: 'Toggle dynamic size',
     wireframe_mode: 'Wireframe Mode',
     clone: 'Duplicate Element(s)',
     del: 'Delete Element(s)',

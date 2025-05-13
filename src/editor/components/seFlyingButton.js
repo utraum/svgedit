@@ -295,8 +295,15 @@ export class FlyingButton extends HTMLElement {
           } else {
             this.setAttribute('opened', 'opened')
             // In case menu scroll on top or bottom position based popup position set
-            const rect = this.getBoundingClientRect()
-            this.$menu.style.top = rect.top + 'px'
+            const rect = this.getBoundingClientRect();
+
+            // Inside a dialog, calculate position relative to the dialog.
+            const isInsideDialog = svgEditor.$container.closest('.p-dialog');
+            if(!isInsideDialog){
+              this.$menu.style.top = rect.top + 'px'
+            }else {
+              this.$menu.style.top = 'unset'
+            }
           }
           break
         default:

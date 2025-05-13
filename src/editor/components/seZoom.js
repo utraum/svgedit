@@ -108,7 +108,7 @@ template.innerHTML = `
 `
 
 class SeZoom extends HTMLElement {
-  constructor () {
+  constructor() {
     super()
 
     this.handleMouseDown = this.handleMouseDown.bind(this)
@@ -118,7 +118,7 @@ class SeZoom extends HTMLElement {
     this.handleInput = this.handleInput.bind(this)
 
     // create the shadowDom and insert the template
-    this._shadowRoot = this.attachShadow({ mode: 'open' })
+    this._shadowRoot = this.attachShadow({mode: 'open'})
     // locate the component
     this._shadowRoot.append(template.content.cloneNode(true))
 
@@ -181,7 +181,7 @@ class SeZoom extends HTMLElement {
     this.changedTimeout = null
   }
 
-  static get observedAttributes () {
+  static get observedAttributes() {
     return ['value']
   }
 
@@ -189,7 +189,7 @@ class SeZoom extends HTMLElement {
    * @function get
    * @returns {any}
    */
-  get value () {
+  get value() {
     return this.getAttribute('value')
   }
 
@@ -197,7 +197,7 @@ class SeZoom extends HTMLElement {
    * @function set
    * @returns {void}
    */
-  set value (value) {
+  set value(value) {
     this.setAttribute('value', value)
   }
 
@@ -208,7 +208,7 @@ class SeZoom extends HTMLElement {
    * @param {string} newValue
    * @returns {void}
    */
-  attributeChangedCallback (name, oldValue, newValue) {
+  attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) {
       switch (name) {
         case 'value':
@@ -225,7 +225,7 @@ class SeZoom extends HTMLElement {
       case 'value':
         this.inputElement.value = newValue
         this.dispatchEvent(
-          new CustomEvent('change', { detail: { value: newValue } })
+          new CustomEvent('change', {detail: {value: newValue}})
         )
         break
     }
@@ -235,7 +235,7 @@ class SeZoom extends HTMLElement {
    * @function handleOptionsChange
    * @returns {void}
    */
-  handleOptionsChange () {
+  handleOptionsChange() {
     if (this.slotElement.assignedElements().length > 0) {
       this.options = this.slotElement.assignedElements()
       this.selectedValue = this.options[0].textContent
@@ -252,7 +252,7 @@ class SeZoom extends HTMLElement {
    * @function handleClick
    * @returns {void}
    */
-  handleClick () {
+  handleClick() {
     this.optionsContainer.style.display = 'flex'
     this.inputElement.select()
     this.initPopup()
@@ -263,7 +263,7 @@ class SeZoom extends HTMLElement {
    * @param {Event} e
    * @returns {void}
    */
-  handleSelect (e) {
+  handleSelect(e) {
     this.value = e.target.getAttribute('value')
     this.title = e.target.getAttribute('text')
   }
@@ -273,15 +273,20 @@ class SeZoom extends HTMLElement {
    * @returns {void}
    * initialises the popup menu position
    */
-  initPopup () {
-    const zoomPos = this.getBoundingClientRect()
-    const popupPos = this.optionsContainer.getBoundingClientRect()
-    const top = zoomPos.top - popupPos.height
-    const left = zoomPos.left
+  initPopup() {
+    const zoomPos = this.getBoundingClientRect();
+    const popupPos = this.optionsContainer.getBoundingClientRect();
+    const isInsideDialog = svgEditor.$container.closest('.p-dialog');
 
-    this.optionsContainer.style.position = 'fixed'
-    this.optionsContainer.style.top = `${top}px`
-    this.optionsContainer.style.left = `${left}px`
+    // Inside a dialog, calculate position relative to the dialog.
+    const dialogOffset = isInsideDialog
+      ? isInsideDialog.getBoundingClientRect()
+      : { top: 0, left: 0 };
+
+    this.optionsContainer.style.position = 'fixed';
+    this.optionsContainer.style.top = `${zoomPos.top - popupPos.height - dialogOffset.top}px`;
+    this.optionsContainer.style.left = `${zoomPos.left - dialogOffset.left}px`;
+
   }
 
   /**
@@ -290,7 +295,7 @@ class SeZoom extends HTMLElement {
    * @returns {void}
    * Close the popup menu
    */
-  handleClose (e) {
+  handleClose(e) {
     if (e.target !== this) {
       this.optionsContainer.style.display = 'none'
       this.inputElement.blur()
@@ -301,7 +306,7 @@ class SeZoom extends HTMLElement {
    * @function handleInput
    * @returns {void}
    */
-  handleInput () {
+  handleInput() {
     if (this.changedTimeout) {
       clearTimeout(this.changedTimeout)
     }
@@ -313,7 +318,7 @@ class SeZoom extends HTMLElement {
    * @function triggerInputChanged
    * @returns {void}
    */
-  triggerInputChanged () {
+  triggerInputChanged() {
     const newValue = this.inputElement.value
     this.value = newValue
   }
@@ -322,7 +327,7 @@ class SeZoom extends HTMLElement {
    * @function increment
    * @returns {void}
    */
-  increment () {
+  increment() {
     this.value = parseInt(this.value) + 10
   }
 
@@ -330,7 +335,7 @@ class SeZoom extends HTMLElement {
    * @function decrement
    * @returns {void}
    */
-  decrement () {
+  decrement() {
     if (this.value - 10 <= 0) {
       this.value = 10
     } else {
@@ -345,7 +350,7 @@ class SeZoom extends HTMLElement {
    * @returns {void}
    * Increment/Decrement on mouse held down, if its the first call add a delay before starting
    */
-  handleMouseDown (dir, isFirst) {
+  handleMouseDown(dir, isFirst) {
     if (dir === 'up') {
       this.incrementHold = true
       !isFirst && this.increment()
@@ -378,7 +383,7 @@ class SeZoom extends HTMLElement {
    * @param {string} dir
    * @returns {void}
    */
-  handleMouseUp (dir) {
+  handleMouseUp(dir) {
     if (dir === 'up') {
       this.incrementHold = false
     } else {
@@ -391,7 +396,7 @@ class SeZoom extends HTMLElement {
    * @param {Event} e
    * @returns {void}
    */
-  handleKeyDown (e) {
+  handleKeyDown(e) {
     if (e.key === 'ArrowUp') {
       this.increment()
     } else if (e.key === 'ArrowDown') {

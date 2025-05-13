@@ -17,7 +17,7 @@
  * @example $.jGraduate.Paint({linearGradient: o, a: 50}); // creates a linear gradient paint with opacity=0.5
  * @example $.jGraduate.Paint({radialGradient: o, a: 7}); // creates a radial gradient paint with opacity=0.07
  * @example $.jGraduate.Paint({hex: '#rrggbb', linearGradient: o}); // throws an exception?
-*/
+ */
 import SvgCanvas from '@svgedit/svgcanvas'
 import { jPickerDefaults, jPickerMethod } from './jQuery.jPicker.js'
 import { findPos } from '@svgedit/svgcanvas/common/util.js'
@@ -25,12 +25,12 @@ import { findPos } from '@svgedit/svgcanvas/common/util.js'
 /**
  * @todo JFH: This jQuery plugin was adapted to work within a Web Component.
  * We have to rewrite it as a pure webcomponent.
-*/
+ */
 
 /**
-  * The jQuery namespace.
-  * @external jQuery
-*/
+ * The jQuery namespace.
+ * @external jQuery
+ */
 /**
  * The jQuery plugin namespace.
  * @namespace {PlainObject} fn
@@ -45,82 +45,84 @@ const ns = {
 
 if (!window.console) {
   window.console = {
-    log () { /* empty fn */ },
-    dir () { /* empty fn */ }
+    log () { /* empty fn */
+    },
+    dir () { /* empty fn */
+    }
   }
 }
 
 /**
-* Adds {@link external:jQuery.jGraduate.Paint},
-* {@link external:jQuery.fn.jGraduateDefaults},
-* {@link external:jQuery.fn.jGraduate}.
-* @function module:jGraduate.jGraduate
-* @param {external:jQuery} $ The jQuery instance to wrap
-* @returns {external:jQuery}
-*/
+ * Adds {@link external:jQuery.jGraduate.Paint},
+ * {@link external:jQuery.fn.jGraduateDefaults},
+ * {@link external:jQuery.fn.jGraduate}.
+ * @function module:jGraduate.jGraduate
+ * @param {external:jQuery} $ The jQuery instance to wrap
+ * @returns {external:jQuery}
+ */
 // export default function jQueryPluginJGraduate ($) {
 /**
-* @namespace {PlainObject} jGraduate
-* @memberof external:jQuery
-*/
+ * @namespace {PlainObject} jGraduate
+ * @memberof external:jQuery
+ */
 export const jGraduate = /** @lends external:jQuery.jGraduate */ {
   /**
-  * @class external:jQuery.jGraduate.Paint
-  * @see module:jGraduate~Paint
-  */
+   * @class external:jQuery.jGraduate.Paint
+   * @see module:jGraduate~Paint
+   */
   Paint: SvgCanvas.Paint
 }
 
 // JSDoc doesn't show this as belonging to our `module:jGraduate.Options` type,
 //   so we use `@see`
 /**
-* @namespace {module:jGraduate.Options} jGraduateDefaults
-* @memberof external:jQuery.fn
-*/
+ * @namespace {module:jGraduate.Options} jGraduateDefaults
+ * @memberof external:jQuery.fn
+ */
 export const jGraduateDefaults = /** @lends external:jQuery.fn.jGraduateDefaults */ {
   /**
-  * Creates an object with a 'none' color.
-  * @type {external:jQuery.jGraduate.Paint}
-  * @see module:jGraduate.Options
-  */
+   * Creates an object with a 'none' color.
+   * @type {external:jQuery.jGraduate.Paint}
+   * @see module:jGraduate.Options
+   */
   paint: new jGraduate.Paint(),
   /**
-  * @namespace
-  */
+   * @namespace
+   */
   window: {
     /**
-    * @type {string}
-    * @see module:jGraduate.Options
-    */
+     * @type {string}
+     * @see module:jGraduate.Options
+     */
     pickerTitle: 'Drag markers to pick a paint'
   },
   /**
-  * @namespace
-  */
+   * @namespace
+   */
   images: {
     /**
-    * @type {string}
-    * @see module:jGraduate.Options
-    */
+     * @type {string}
+     * @see module:jGraduate.Options
+     */
     clientPath: 'images/'
   },
   /**
-  * @type {string}
-  * @see module:jGraduate.Options
-  */
+   * @type {string}
+   * @see module:jGraduate.Options
+   */
   newstop: 'inverse' // same, inverse, black, white
 }
 
 const isGecko = navigator.userAgent.includes('Gecko/')
 
 /**
-* @typedef {PlainObject<string, string>} module:jGraduate.Attrs
-*/
+ * @typedef {PlainObject<string, string>} module:jGraduate.Attrs
+ */
 /**
-* @param {SVGElement} elem
-* @param {module:jGraduate.Attrs} attrs
-* @returns {void}
-*/
+ * @param {SVGElement} elem
+ * @param {module:jGraduate.Attrs} attrs
+ * @returns {void}
+ */
 function setAttrs (elem, attrs) {
   if (isGecko) {
     Object.entries(attrs).forEach(([aname, val]) => {
@@ -139,11 +141,11 @@ function setAttrs (elem, attrs) {
 }
 
 /**
-* @param {string} name
-* @param {module:jGraduate.Attrs} attrs
-* @param {Element} newparent
-* @returns {SVGElement}
-*/
+ * @param {string} name
+ * @param {module:jGraduate.Attrs} attrs
+ * @param {Element} newparent
+ * @returns {SVGElement}
+ */
 function mkElem (name, attrs, newparent) {
   const elem = document.createElementNS(ns.svg, name)
   setAttrs(elem, attrs)
@@ -154,37 +156,38 @@ function mkElem (name, attrs, newparent) {
 }
 
 /**
-* @typedef {PlainObject} module:jGraduate.ColorOpac Object may have one or both values
-* @property {string} [color] #Hex color
-* @property {Float} [opac] 0-1
-*/
+ * @typedef {PlainObject} module:jGraduate.ColorOpac Object may have one or both values
+ * @property {string} [color] #Hex color
+ * @property {Float} [opac] 0-1
+ */
 /**
-* @typedef {PlainObject} module:jGraduate.Options
-* @property {module:jGraduate~Paint} [paint] A Paint object object describing the paint to display initially; defaults to a new instance without options (defaults to opaque white)
-* @property {external:Window} [window]
-* @property {string} [window.pickerTitle="Drag markers to pick a paint"]
-* @property {PlainObject} [images]
-* @property {string} [images.clientPath="images/"]
-* @property {"same"|"inverse"|"black"|"white"|module:jGraduate.ColorOpac} [newstop="inverse"]
-*/
+ * @typedef {PlainObject} module:jGraduate.Options
+ * @property {module:jGraduate~Paint} [paint] A Paint object object describing the paint to display initially; defaults to a new instance without options (defaults to opaque white)
+ * @property {external:Window} [window]
+ * @property {string} [window.pickerTitle="Drag markers to pick a paint"]
+ * @property {PlainObject} [images]
+ * @property {string} [images.clientPath="images/"]
+ * @property {"same"|"inverse"|"black"|"white"|module:jGraduate.ColorOpac} [newstop="inverse"]
+ */
 
 /**
-* @callback external:jQuery.fn.jGraduate.OkCallback
-* @param {external:jQuery.jGraduate.Paint} paint
-* @returns {void}
-*/
-/**
-* @callback external:jQuery.fn.jGraduate.CancelCallback
-* @returns {void}
-*/
+ * @callback external:jQuery.fn.jGraduate.OkCallback
+ * @param {external:jQuery.jGraduate.Paint} paint
+ * @returns {void}
+ */
 
 /**
-* @function external:jQuery.fn.jGraduate
-* @param {module:jGraduate.Options} [options]
-* @param {external:jQuery.fn.jGraduate.OkCallback} [okCallback] Called with a Paint object when Ok is pressed
-* @param {external:jQuery.fn.jGraduate.CancelCallback} [cancelCallback] Called with no arguments when Cancel is pressed
-* @returns {external:jQuery}
-*/
+ * @callback external:jQuery.fn.jGraduate.CancelCallback
+ * @returns {void}
+ */
+
+/**
+ * @function external:jQuery.fn.jGraduate
+ * @param {module:jGraduate.Options} [options]
+ * @param {external:jQuery.fn.jGraduate.OkCallback} [okCallback] Called with a Paint object when Ok is pressed
+ * @param {external:jQuery.fn.jGraduate.CancelCallback} [cancelCallback] Called with no arguments when Cancel is pressed
+ * @returns {external:jQuery}
+ */
 export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18next) {
   const $this = elem
   const $settings = Object.assign({}, jGraduateDefaults, options || {})
@@ -297,7 +300,7 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
           </select>
         </div>
       </div>
-      <div class="jGraduate_Form">
+      <div class="jGraduate_Form" id="jGraduate_Form_Key">
         <div class="jGraduate_Slider jGraduate_RadiusField jGraduate_rg_field">
           <label class="prelabel">${i18next.t('config.jgraduate_radius')}</label>
           <div id="${id}_jGraduate_Radius" class="jGraduate_SliderBar jGraduate_Radius" title="${i18next.t('config.jgraduate_set_radius')}">
@@ -348,7 +351,7 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
 
   const attrInput = {}
 
-  const SLIDERW = 145
+  const SLIDERW = 100
   const JQSliderBars = $this.querySelectorAll('.jGraduate_SliderBar')
   for (const JQSliderBar of JQSliderBars) {
     JQSliderBar.style.width = SLIDERW + 'px'
@@ -389,7 +392,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
       mkElem('radialGradient', {
         id: id + '_rg_jgraduate_grad'
       }, svg)
-      if (curType === 'linearGradient') { break }
+      if (curType === 'linearGradient') {
+        break
+      }
     // fall through
     case 'radialGradient':
       if (!isSolid) {
@@ -417,17 +422,18 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
           break
 
         case 'inverse': {
-        // Invert current color for second stop
+          // Invert current color for second stop
           let inverted = ''
           for (let i = 0; i < 6; i += 2) {
-          // const ch = color.substr(i, 2);
+            // const ch = color.substr(i, 2);
             let inv = (255 - Number.parseInt(color.substr(i, 2), 16)).toString(16)
             if (inv.length < 2) inv = 0 + inv
             inverted += inv
           }
           mkStop(1, '#' + inverted, 1)
           break
-        } case 'white':
+        }
+        case 'white':
           mkStop(1, '#ffffff', 1)
           break
 
@@ -510,7 +516,7 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
     }
 
     if (!(attr[0] === 'f' &&
-      !showFocus) &&
+        !showFocus) &&
       ((isRadial && curType === 'radialGradient') || (!isRadial && curType === 'linearGradient'))) {
       curGradient.setAttribute(attr, e.target.value)
     }
@@ -608,7 +614,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
       let stopOpacity = Number(stop.getAttribute('stop-opacity')) || 1
       let stopColor = stop.getAttribute('stop-color') || 1
       let thisAlpha = (Number.parseFloat(stopOpacity) * 255).toString(16)
-      while (thisAlpha.length < 2) { thisAlpha = '0' + thisAlpha }
+      while (thisAlpha.length < 2) {
+        thisAlpha = '0' + thisAlpha
+      }
       colr = stopColor.substr(1) + thisAlpha
       const jqPickerElem = $this.querySelector('#' + id + '_jGraduate_stopPicker')
       jqPickerElem.style.left = '100px'
@@ -656,9 +664,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
   }
 
   /**
-  *
-  * @returns {void}
-  */
+   *
+   * @returns {void}
+   */
   function remStop () {
     delStop.setAttribute('display', 'none')
     const path = curStop
@@ -669,7 +677,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
 
   const stopMakerDiv = $this.querySelector('#' + id + '_jGraduate_StopSlider')
 
-  let stops; let curStop; let drag
+  let stops
+  let curStop
+  let drag
 
   const delStop = mkElem('path', {
     d: 'm9.75,-6l-19.5,19.5m0,-19.5l19.5,19.5',
@@ -680,9 +690,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
   }, undefined) // stopMakerSVG);
 
   /**
-  * @param {Element} item
-  * @returns {void}
-  */
+   * @param {Element} item
+   * @returns {void}
+   */
   function selectStop (item) {
     if (curStop) curStop.setAttribute('stroke', '#000')
     item.setAttribute('stroke', 'blue')
@@ -692,9 +702,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
   let stopOffset
 
   /**
-  *
-  * @returns {void}
-  */
+   *
+   * @returns {void}
+   */
   function remDrags () {
     $win.removeEventListener('mousemove', dragColor)
     if (delStop.getAttribute('display') !== 'none') {
@@ -703,14 +713,17 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
     drag = null
   }
 
-  let scaleX = 1; let scaleY = 1; let angle = 0
+  let scaleX = 1
+  let scaleY = 1
+  let angle = 0
 
   let cX = cx
   let cY = cy
+
   /**
-  *
-  * @returns {void}
-  */
+   *
+   * @returns {void}
+   */
   function xform () {
     const rot = angle ? 'rotate(' + angle + ',' + cX + ',' + cY + ') ' : ''
     if (scaleX === 1 && scaleY === 1) {
@@ -721,15 +734,15 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
       curGradient.setAttribute(
         'gradientTransform',
         rot + 'translate(' + x + ',' + y + ') scale(' +
-          scaleX + ',' + scaleY + ')'
+        scaleX + ',' + scaleY + ')'
       )
     }
   }
 
   /**
-  * @param {Event} evt
-  * @returns {void}
-  */
+   * @param {Event} evt
+   * @returns {void}
+   */
   function dragColor (evt) {
     let x = evt.pageX - stopOffset.left
     const y = evt.pageY - stopOffset.top
@@ -939,7 +952,8 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
 
   $this.querySelector('#' + id + '_jGraduate_match_ctr').checked = !showFocus
 
-  let lastfx; let lastfy
+  let lastfx
+  let lastfy
   const onMatchCtrHandler = (e) => {
     showFocus = !e.target.checked
     if (showFocus) {
@@ -1027,7 +1041,8 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
     slider.input.value = x
   }
 
-  let ellipVal = 0; let angleVal = 0
+  let ellipVal = 0
+  let angleVal = 0
 
   if (curType === 'radialGradient') {
     const tlist = curGradient.gradientTransform.baseVal
@@ -1164,7 +1179,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
 
   // --------------
   let thisAlpha = ($this.paint.alpha * 255 / 100).toString(16)
-  while (thisAlpha.length < 2) { thisAlpha = '0' + thisAlpha }
+  while (thisAlpha.length < 2) {
+    thisAlpha = '0' + thisAlpha
+  }
   thisAlpha = thisAlpha.split('.')[0]
   color = $this.paint.solidColor === 'none' ? '' : $this.paint.solidColor + thisAlpha
 
@@ -1191,7 +1208,9 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
       okClicked()
     },
     null,
-    function () { cancelClicked() },
+    function () {
+      cancelClicked()
+    },
     i18next
   )
 
@@ -1209,6 +1228,13 @@ export function jGraduateMethod (elem, options, okCallback, cancelCallback, i18n
     const type = e.target.dataset.type
     gradPicker.style.display = 'block'
     if (type === 'rg' || type === 'lg') {
+      // If the tab is radialGradient, the height and top position will be adjusted.
+      if ($this.querySelectorAll('#jGraduate_gradPick') && $this.querySelectorAll('#jGraduate_gradPick').length &&
+        $this.querySelectorAll('#jGraduate_Form_Key') && $this.querySelectorAll('#jGraduate_Form_Key').length) {
+        $this.querySelectorAll('#jGraduate_gradPick')[0].style.height = (type === 'rg') ? '365px' : ''
+        $this.querySelectorAll('#jGraduate_Form_Key')[0].style.top = (type === 'rg') ? '220px' : ''
+      }
+
       const tFileds = $this.querySelectorAll('.jGraduate_' + type + '_field');
       [].forEach.call(tFileds, function (tFiled) {
         tFiled.style.display = 'block'

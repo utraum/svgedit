@@ -1,5 +1,5 @@
 /* globals svgEditor */
-import { t } from '../locale.js'
+import {t} from '../locale.js'
 
 const template = document.createElement('template')
 template.innerHTML = `
@@ -43,17 +43,18 @@ template.innerHTML = `
   </div>
 
 `
+
 /**
  * @class SeList
  */
 export class SeList extends HTMLElement {
   /**
-    * @function constructor
-    */
-  constructor () {
+   * @function constructor
+   */
+  constructor() {
     super()
     // create the shadowDom and insert the template
-    this._shadowRoot = this.attachShadow({ mode: 'open' })
+    this._shadowRoot = this.attachShadow({mode: 'open'})
     this._shadowRoot.append(template.content.cloneNode(true))
     this.$dropdown = this._shadowRoot.querySelector('#select-container')
     this.$label = this._shadowRoot.querySelector('label')
@@ -81,8 +82,10 @@ export class SeList extends HTMLElement {
       if (element.getAttribute('value') === newValue) {
         element.setAttribute('selected', true)
         if (element.hasAttribute('src')) {
-        // empty current selection children
-          while (this.$selection.firstChild) { this.$selection.removeChild(this.$selection.firstChild) }
+          // empty current selection children
+          while (this.$selection.firstChild) {
+            this.$selection.removeChild(this.$selection.firstChild)
+          }
           // replace selection child with image of new value
           const img = document.createElement('img')
           img.src = this.imgPath + '/' + element.getAttribute('src')
@@ -102,7 +105,7 @@ export class SeList extends HTMLElement {
    * @function observedAttributes
    * @returns {any} observed
    */
-  static get observedAttributes () {
+  static get observedAttributes() {
     return ['label', 'width', 'height', 'title', 'value']
   }
 
@@ -113,7 +116,7 @@ export class SeList extends HTMLElement {
    * @param {string} newValue
    * @returns {void}
    */
-  attributeChangedCallback (name, oldValue, newValue) {
+  attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue === newValue) return
     switch (name) {
       case 'title':
@@ -141,7 +144,7 @@ export class SeList extends HTMLElement {
    * @function get
    * @returns {any}
    */
-  get title () {
+  get title() {
     return this.getAttribute('title')
   }
 
@@ -149,7 +152,7 @@ export class SeList extends HTMLElement {
    * @function set
    * @returns {void}
    */
-  set title (value) {
+  set title(value) {
     this.setAttribute('title', value)
   }
 
@@ -157,7 +160,7 @@ export class SeList extends HTMLElement {
    * @function get
    * @returns {any}
    */
-  get label () {
+  get label() {
     return this.getAttribute('label')
   }
 
@@ -165,7 +168,7 @@ export class SeList extends HTMLElement {
    * @function set
    * @returns {void}
    */
-  set label (value) {
+  set label(value) {
     this.setAttribute('label', value)
   }
 
@@ -173,7 +176,7 @@ export class SeList extends HTMLElement {
    * @function get
    * @returns {any}
    */
-  get width () {
+  get width() {
     return this.getAttribute('width')
   }
 
@@ -181,7 +184,7 @@ export class SeList extends HTMLElement {
    * @function set
    * @returns {void}
    */
-  set width (value) {
+  set width(value) {
     this.setAttribute('width', value)
   }
 
@@ -189,7 +192,7 @@ export class SeList extends HTMLElement {
    * @function get
    * @returns {any}
    */
-  get height () {
+  get height() {
     return this.getAttribute('height')
   }
 
@@ -197,7 +200,7 @@ export class SeList extends HTMLElement {
    * @function set
    * @returns {void}
    */
-  set height (value) {
+  set height(value) {
     this.setAttribute('height', value)
   }
 
@@ -212,29 +215,36 @@ export class SeList extends HTMLElement {
   }
 
   setDropdownListPosition = () => {
-    const windowHeight = window.innerHeight
-    const selectedContainerPosition = this.$selection.getBoundingClientRect()
-    const optionsContainerPosition = this.$optionsContainer.getBoundingClientRect()
-    // list is bottom of frame - needs to open from above
-    if (selectedContainerPosition.bottom + optionsContainerPosition.height > windowHeight) {
-      this.$optionsContainer.style.top = selectedContainerPosition.top - optionsContainerPosition.height + 'px'
-      this.$optionsContainer.style.left = selectedContainerPosition.left + 'px'
+    const selectedContainerPosition = this.$selection.getBoundingClientRect();
+    const optionsContainerPosition = this.$optionsContainer.getBoundingClientRect();
+    const isInsideDialog = svgEditor.$container.closest('.p-dialog');
+    if (!isInsideDialog) {
+      const windowHeight = window.innerHeight;
+      if (selectedContainerPosition.bottom + optionsContainerPosition.height > windowHeight) {
+        this.$optionsContainer.style.top = selectedContainerPosition.top - optionsContainerPosition.height + 'px';
+        this.$optionsContainer.style.left = selectedContainerPosition.left + 'px';
+      } else {
+        this.$optionsContainer.style.top = selectedContainerPosition.bottom + 'px';
+        this.$optionsContainer.style.left = selectedContainerPosition.left + 'px';
+      }
     } else {
-      this.$optionsContainer.style.top = selectedContainerPosition.bottom + 'px'
-      this.$optionsContainer.style.left = selectedContainerPosition.left + 'px'
+      // Inside a dialog, calculate position relative to the dialog
+      const dialogRect = isInsideDialog.getBoundingClientRect();
+      this.$optionsContainer.style.top = (selectedContainerPosition.top - optionsContainerPosition.height - dialogRect.top) + 'px';
+      this.$optionsContainer.style.left = (selectedContainerPosition.left - dialogRect.left) + 'px';
     }
-  }
+  };
 
   /**
    * @function connectedCallback
    * @returns {void}
    */
-  connectedCallback () {
+  connectedCallback() {
     const currentObj = this
     this.$dropdown.addEventListener('selectedindexchange', (e) => {
       if (e?.detail?.selectedItem !== undefined) {
         const value = e.detail.selectedItem
-        const closeEvent = new CustomEvent('change', { detail: { value } })
+        const closeEvent = new CustomEvent('change', {detail: {value}})
         currentObj.dispatchEvent(closeEvent)
         currentObj.value = value
         currentObj.setAttribute('value', value)
@@ -253,7 +263,7 @@ export class SeList extends HTMLElement {
           this.closeDropdown()
         }
       }
-    }, { capture: true })
+    }, {capture: true})
   }
 }
 

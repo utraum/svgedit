@@ -569,7 +569,7 @@ div.jGraduate_stopPicker {
 }
 
 .jGraduate_Slider label.prelabel {
-  width: 40px;
+  width: 70px;
   text-align: left;
 }
 
@@ -646,6 +646,7 @@ div.jGraduate_Slider img {
   <!-- hidden div -->
   <div id="color_picker"></div>
 `
+
 /**
  * @class SeColorPicker
  */
@@ -765,10 +766,15 @@ export class SeColorPicker extends HTMLElement {
   // Wrap jGraduateMethod in a Promise
   jGraduateMethodAsync () {
     return new Promise((resolve, reject) => {
+      let clientPath = './components/jgraduate/images/'
+      // If imgPath is provided, it will be used as the path for the images in color_picker.
+      if (this.imgPath) {
+        clientPath = this.imgPath + '/'
+      }
       jGraduateMethod(
         this.$color_picker,
         {
-          images: { clientPath: './components/jgraduate/images/' },
+          images: { clientPath },
           paint: this.paintBox.paint,
           window: { pickerTitle: this.label },
           newstop: 'inverse'

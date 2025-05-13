@@ -226,7 +226,8 @@ class TopPanel {
         this.editor.svgCanvas.getMode() === 'image' &&
         !this.editor.svgCanvas.getHref(elem).startsWith('data:')
       ) {
-        /* await */ this.promptImgURL({ cancelDeletes: true })
+        /* await */
+        this.promptImgURL({ cancelDeletes: true })
       }
 
       if (!isNode && currentMode !== 'pathedit') {
@@ -423,7 +424,7 @@ class TopPanel {
       )
       menuItems.setAttribute(
         (tagName === 'g' || !this.multiselected ? 'dis' : 'en') +
-          'ablemenuitems',
+        'ablemenuitems',
         '#group'
       )
 
@@ -924,8 +925,22 @@ class TopPanel {
       }
     } else {
       setTimeout(() => {
-        $id('tool_select').setAttribute('src', 'select.svg')
+        if($id('tool_select')){
+          $id('tool_select').setAttribute('src', 'select.svg')
+        }
       }, 1000)
+    }
+  }
+
+  /**
+   * Updates the labels specifically for the German language.
+   * @private
+   */
+  _updateLabelsForGerman () {
+    const { i18next } = this.editor
+    if (i18next.language === 'de') {
+      $id('elem_id').setAttribute('label', i18next.t('properties.id_label'))
+      // Add any other label updates here if needed
     }
   }
 

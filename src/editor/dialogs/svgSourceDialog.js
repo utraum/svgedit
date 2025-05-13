@@ -3,13 +3,14 @@ import svgSourceDialogHTML from './svgSourceDialog.html'
 
 const template = document.createElement('template')
 template.innerHTML = svgSourceDialogHTML
+
 /**
  * @class SeSvgSourceEditorDialog
  */
 export class SeSvgSourceEditorDialog extends HTMLElement {
   /**
-    * @function constructor
-    */
+   * @function constructor
+   */
   constructor () {
     super()
     // create the shadowDom and insert the template
@@ -36,6 +37,11 @@ export class SeSvgSourceEditorDialog extends HTMLElement {
     this.setAttribute('common-cancel', i18next.t('common.cancel'))
     this.setAttribute('notification-source_dialog_note', i18next.t('notification.source_dialog_note'))
     this.setAttribute('config-done', i18next.t('config.done'))
+    this.setAttribute('tool_source_dynamic', i18next.t('tool_source_dynamic'))
+    const dynamicLabelText = this._shadowRoot.querySelector('#dynamic_label_text')
+    if (dynamicLabelText) {
+      dynamicLabelText.textContent = i18next.t('tools.tool_source_dynamic')
+    }
   }
 
   /**

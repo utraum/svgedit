@@ -1,45 +1,42 @@
 /* globals seConfirm seAlert */
-import {
-  putLocale
-} from './locale.js'
-import {
-  hasCustomHandler, getCustomHandler, injectExtendedContextMenuItemsIntoDom
-} from './contextmenu.js'
+import {putLocale} from './locale.js'
+import {getCustomHandler, hasCustomHandler, injectExtendedContextMenuItemsIntoDom} from './contextmenu.js'
 import editorTemplate from './templates/editorTemplate.html'
 import SvgCanvas from '@svgedit/svgcanvas'
 import Rulers from './Rulers.js'
 
 /**
-   * @fires module:svgcanvas.SvgCanvas#event:svgEditorReady
-   * @returns {void}
-   */
+ * @fires module:svgcanvas.SvgCanvas#event:svgEditorReady
+ * @returns {void}
+ */
 const readySignal = () => {
   // let the opener know SVG Edit is ready (now that config is set up)
   const w = window.opener || window.parent
   if (w) {
     try {
       /**
-         * Triggered on a containing `document` (of `window.opener`
-         * or `window.parent`) when the editor is loaded.
-         * @event module:SVGEditor#event:svgEditorReadyEvent
-         * @type {Event}
-         * @property {true} bubbles
-         * @property {true} cancelable
-         */
+       * Triggered on a containing `document` (of `window.opener`
+       * or `window.parent`) when the editor is loaded.
+       * @event module:SVGEditor#event:svgEditorReadyEvent
+       * @type {Event}
+       * @property {true} bubbles
+       * @property {true} cancelable
+       */
       /**
-         * @name module:SVGthis.svgEditorReadyEvent
-         * @type {module:SVGEditor#event:svgEditorReadyEvent}
-         */
+       * @name module:SVGthis.svgEditorReadyEvent
+       * @type {module:SVGEditor#event:svgEditorReadyEvent}
+       */
       const svgEditorReadyEvent = new w.CustomEvent('svgEditorReady', {
         bubbles: true,
         cancelable: true
       })
       w.document.documentElement.dispatchEvent(svgEditorReadyEvent)
-    } catch (e) { /* empty fn */ }
+    } catch (e) { /* empty fn */
+    }
   }
 }
 
-const { $id, $click, convertUnit } = SvgCanvas
+const {$id, $click, convertUnit} = SvgCanvas
 
 /**
  *
@@ -48,23 +45,23 @@ class EditorStartup {
   /**
    *
    */
-  constructor (div) {
+  constructor(div) {
     this.extensionsAdded = false
     this.messageQueue = []
     this.$container = div ?? $id('svg_editor')
   }
 
   /**
-  * Auto-run after a Promise microtask.
-  * @function module:SVGthis.init
-  * @returns {void}
-  */
-  async init () {
+   * Auto-run after a Promise microtask.
+   * @function module:SVGthis.init
+   * @returns {void}
+   */
+  async init() {
     if ('localStorage' in window) {
       this.storage = window.localStorage
     }
     this.configObj.load()
-    const { i18next } = await putLocale(this.configObj.pref('lang'), this.goodLangs)
+    const {i18next} = await putLocale(this.configObj.pref('lang'), this.goodLangs)
     this.i18next = i18next
     await import('./components/index.js')
     await import('./dialogs/index.js')
@@ -110,9 +107,9 @@ class EditorStartup {
     }
 
     /**
-    * @name module:SVGthis.canvas
-    * @type {module:svgcanvas.SvgCanvas}
-    */
+     * @name module:SVGthis.canvas
+     * @type {module:svgcanvas.SvgCanvas}
+     */
     this.svgCanvas = new SvgCanvas(
       $id('svgcanvas'),
       this.configObj.curConfig
@@ -124,7 +121,7 @@ class EditorStartup {
 
     /** if true - selected tool can be cancelled with Esc key
      * disables on dragging (mousedown) to avoid changing mode in the middle of drawing
-    */
+     */
     this.enableToolCancel = true
 
     this.leftPanel.init()
@@ -133,7 +130,7 @@ class EditorStartup {
     this.layersPanel.init()
     this.mainMenu.init()
 
-    const { undoMgr } = this.svgCanvas
+    const {undoMgr} = this.svgCanvas
     this.canvMenu = $id('se-cmenu_canvas')
     this.exportWindow = null
     this.defaultImageURL = `${this.configObj.curConfig.imgPath}/logo.svg`
@@ -172,7 +169,7 @@ class EditorStartup {
       if (!data.output) { // Ignore Chrome
         return
       }
-      const { exportWindowName } = data
+      const {exportWindowName} = data
       if (exportWindowName) {
         this.exportWindow = window.open('', this.exportWindowName) // A hack to get the window via JSON-able name without opening a new one
       }
@@ -187,14 +184,14 @@ class EditorStartup {
     this.svgCanvas.bind(
       'updateCanvas',
       /**
-     * @param {external:Window} win
-     * @param {PlainObject} centerInfo
-     * @param {false} centerInfo.center
-     * @param {module:math.XYObject} centerInfo.newCtr
-     * @listens module:svgcanvas.SvgCanvas#event:updateCanvas
-     * @returns {void}
-     */
-      function (win, { center, newCtr }) {
+       * @param {external:Window} win
+       * @param {PlainObject} centerInfo
+       * @param {false} centerInfo.center
+       * @param {module:math.XYObject} centerInfo.newCtr
+       * @listens module:svgcanvas.SvgCanvas#event:updateCanvas
+       * @returns {void}
+       */
+      function (win, {center, newCtr}) {
         this.updateCanvas(center, newCtr)
       }.bind(this)
     )
@@ -235,11 +232,13 @@ class EditorStartup {
       const destLayer = evt.detail.value
       const confirmStr = this.i18next.t('notification.QmoveElemsToLayer').replace('%s', destLayer)
       /**
-    * @param {boolean} ok
-    * @returns {void}
-    */
+       * @param {boolean} ok
+       * @returns {void}
+       */
       const moveToLayer = (ok) => {
-        if (!ok) { return }
+        if (!ok) {
+          return
+        }
         promptMoveLayerOnce = true
         this.svgCanvas.moveSelectedToLayer(destLayer)
         this.svgCanvas.clearSelection()
@@ -285,12 +284,16 @@ class EditorStartup {
       this.svgCanvas.setGroupTitle(evt.currentTarget.value)
     })
 
-    let lastX = null; let lastY = null
-    let panning = false; let keypan = false
+    let lastX = null;
+    let lastY = null
+    let panning = false;
+    let keypan = false
     let previousMode = 'select'
 
     $id('svgcanvas').addEventListener('mouseup', (evt) => {
-      if (panning === false) { return true }
+      if (panning === false) {
+        return true
+      }
 
       this.workarea.scrollLeft -= (evt.clientX - lastX)
       this.workarea.scrollTop -= (evt.clientY - lastY)
@@ -298,11 +301,15 @@ class EditorStartup {
       lastX = evt.clientX
       lastY = evt.clientY
 
-      if (evt.type === 'mouseup') { panning = false }
+      if (evt.type === 'mouseup') {
+        panning = false
+      }
       return false
     })
     $id('svgcanvas').addEventListener('mousemove', (evt) => {
-      if (panning === false) { return true }
+      if (panning === false) {
+        return true
+      }
 
       this.workarea.scrollLeft -= (evt.clientX - lastX)
       this.workarea.scrollTop -= (evt.clientY - lastY)
@@ -310,7 +317,9 @@ class EditorStartup {
       lastX = evt.clientX
       lastY = evt.clientY
 
-      if (evt.type === 'mouseup') { panning = false }
+      if (evt.type === 'mouseup') {
+        panning = false
+      }
       return false
     })
     $id('svgcanvas').addEventListener('mousedown', (evt) => {
@@ -384,9 +393,9 @@ class EditorStartup {
     }
     let inp
     /**
-      *
-      * @returns {void}
-      */
+     *
+     * @returns {void}
+     */
     const unfocus = () => {
       inp.blur()
     }
@@ -408,8 +417,9 @@ class EditorStartup {
         }
       })
     })
+
     // ref: https://stackoverflow.com/a/1038781
-    function getWidth () {
+    function getWidth() {
       return Math.max(
         document.body.scrollWidth,
         document.documentElement.scrollWidth,
@@ -419,7 +429,7 @@ class EditorStartup {
       )
     }
 
-    function getHeight () {
+    function getHeight() {
       return Math.max(
         document.body.scrollHeight,
         document.documentElement.scrollHeight,
@@ -428,6 +438,7 @@ class EditorStartup {
         document.documentElement.clientHeight
       )
     }
+
     const winWh = {
       width: getWidth(),
       height: getHeight()
@@ -598,20 +609,22 @@ class EditorStartup {
     this.enableOrDisableClipboard()
 
     window.addEventListener('storage', function (e) {
-      if (e.key !== 'svgedit_clipboard') { return }
+      if (e.key !== 'svgedit_clipboard') {
+        return
+      }
 
       this.enableOrDisableClipboard()
     }.bind(this))
 
     window.addEventListener('beforeunload', function (e) {
-    // Suppress warning if page is empty
+      // Suppress warning if page is empty
       if (undoMgr.getUndoStackSize() === 0) {
         this.showSaveWarning = false
       }
 
       // showSaveWarning is set to 'false' when the page is saved.
       if (!this.configObj.curConfig.no_save_warning && this.showSaveWarning) {
-      // Browser already asks question about closing the page
+        // Browser already asks question about closing the page
         e.returnValue = this.i18next.t('notification.unsavedChanges') // Firefox needs this when beforeunload set by addEventListener (even though message is not used)
         return this.i18next.t('notification.unsavedChanges')
       }
@@ -646,7 +659,7 @@ class EditorStartup {
    * @fires module:svgcanvas.SvgCanvas#event:extensions_added
    * @returns {Promise<module:locale.LangAndData>} Resolves to result of {@link module:locale.readLang}
    */
-  async extAndLocaleFunc () {
+  async extAndLocaleFunc() {
     this.$svgEditor.style.visibility = 'visible'
     try {
       // load standard extensions
@@ -664,8 +677,8 @@ class EditorStartup {
              */
             const extPath = this.configObj.curConfig.extPath
             const imported = await import(`${extPath}/${encodeURIComponent(extname)}/${encodeURIComponent(extname)}.js`)
-            const { name = extname, init: initfn } = imported.default
-            return this.addExtension(name, (initfn && initfn.bind(this)), { langParam: 'en' }) /** @todo  change to current lng */
+            const {name = extname, init: initfn} = imported.default
+            return this.addExtension(name, (initfn && initfn.bind(this)), {langParam: 'en'}) /** @todo  change to current lng */
           } catch (err) {
             // Todo: Add config to alert any errors
             console.error('Extension failed to load: ' + extname + '; ', err)
@@ -675,7 +688,7 @@ class EditorStartup {
       )
       // load user extensions (given as pathNames)
       await Promise.all(
-        this.configObj.curConfig.userExtensions.map(async ({ pathName, config }) => {
+        this.configObj.curConfig.userExtensions.map(async ({pathName, config}) => {
           /**
            * @tutorial ExtensionDocs
            * @typedef {PlainObject} module:SVGthis.ExtensionObject
@@ -687,7 +700,7 @@ class EditorStartup {
              * @type {module:SVGthis.ExtensionObject}
              */
             const imported = await import(encodeURI(pathName))
-            const { name, init: initfn } = imported.default
+            const {name, init: initfn} = imported.default
             return this.addExtension(name, (initfn && initfn.bind(this, config)), {})
           } catch (err) {
             // Todo: Add config to alert any errors
@@ -699,11 +712,11 @@ class EditorStartup {
       this.svgCanvas.bind(
         'extensions_added',
         /**
-        * @param {external:Window} _win
-        * @param {module:svgcanvas.SvgCanvas#event:extensions_added} _data
-        * @listens module:SvgCanvas#event:extensions_added
-        * @returns {void}
-        */
+         * @param {external:Window} _win
+         * @param {module:svgcanvas.SvgCanvas#event:extensions_added} _data
+         * @listens module:SvgCanvas#event:extensions_added
+         * @returns {void}
+         */
         (_win, _data) => {
           this.extensionsAdded = true
           this.setAll()
@@ -732,10 +745,10 @@ class EditorStartup {
   }
 
   /**
- * Listens to the mode change, listener is to be added on document
-* @param {Event} evt custom modeChange event
-*/
-  modeListener (evt) {
+   * Listens to the mode change, listener is to be added on document
+   * @param {Event} evt custom modeChange event
+   */
+  modeListener(evt) {
     const mode = this.svgCanvas.getMode()
 
     this.setCursorStyle(mode)
@@ -745,7 +758,7 @@ class EditorStartup {
    * sets cursor styling for workarea depending on the current mode
    * @param {string} mode
    */
-  setCursorStyle (mode) {
+  setCursorStyle(mode) {
     let cs = 'auto'
     switch (mode) {
       case 'ext-panning':
@@ -761,7 +774,7 @@ class EditorStartup {
       case 'square':
       case 'star':
       case 'polygon':
-        cs = `url("./images/cursors/${mode}_cursor.svg"), crosshair`
+        cs = this.getImgPath(mode)
         break
       case 'text':
         // #TODO: Cursor should be changed back to default after text element was created
@@ -774,10 +787,20 @@ class EditorStartup {
     this.workarea.style.cursor = cs
   }
 
+  //If imgPath is entered in configuration, it will be used as path for the images.
+  getImgPath(mode) {
+    const imgPath = this.configObj.curConfig.imgPath;
+    if (imgPath) {
+      return `url("${imgPath}/cursors/${mode}_cursor.svg"), crosshair`
+    }
+    return `url("./images/cursors/${mode}_cursor.svg"), crosshair`
+  }
+
+
   /**
    * Listens for Esc key to be pressed to cancel active mode, sets mode to Select
    */
-  cancelTool () {
+  cancelTool() {
     const mode = this.svgCanvas.getMode()
     // list of modes that are currently save to cancel
     const modesToCancel = ['zoom', 'rect', 'square', 'circle', 'ellipse', 'line', 'text', 'star', 'polygon', 'shapelib', 'image']

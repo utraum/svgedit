@@ -67,7 +67,9 @@ class LayersPanel {
     $click($id('layer_down'), () => this.moveLayer.bind(this)(1))
     $click($id('layer_rename'), this.layerRename.bind(this))
     $id('se-cmenu-layers-more').addEventListener('change', this.lmenuFunc.bind(this))
-    $id('se-cmenu-layers-list').addEventListener('change', (e) => { this.lmenuFunc(e) })
+    $id('se-cmenu-layers-list').addEventListener('change', (e) => {
+      this.lmenuFunc(e)
+    })
     $click($id('sidepanel_handle'), () => this.toggleSidePanel())
     this.toggleSidePanel(this.editor.configObj.curConfig.showlayers)
   }
@@ -241,7 +243,9 @@ class LayersPanel {
     this.editor.svgCanvas.clearSelection()
     const self = this
     const layerlist = $id('layerlist').querySelector('tbody')
-    while (layerlist.firstChild) { layerlist.removeChild(layerlist.firstChild) }
+    while (layerlist.firstChild) {
+      layerlist.removeChild(layerlist.firstChild)
+    }
 
     $id('selLayerNames').setAttribute('options', '')
     const drawing = this.editor.svgCanvas.getCurrentDrawing()
@@ -259,7 +263,13 @@ class LayersPanel {
 
       // fix the eye icon lost at right layers
       const _eye = document.createElement('img')
-      _eye.src = './images/eye.svg'
+
+      const imgPath = svgEditor.configObj.curConfig.imgPath
+      if (imgPath) {
+        _eye.src = imgPath + '/eye.svg'
+      } else {
+        _eye.src = './images/eye.svg'
+      }
       _eye.style.width = '14px'
       _eye.style.width = '14px'
       layerVis.appendChild(_eye)

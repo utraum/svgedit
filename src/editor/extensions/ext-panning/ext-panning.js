@@ -39,7 +39,10 @@ export default {
     return {
       name: svgEditor.i18next.t(`${name}:name`),
       callback () {
-        const btitle = `${name} [Space / mouse wheel + drag]`
+        let btitle = `${svgEditor.i18next.t(`${name}:buttons.0.title`)} [Space / mouse wheel + drag]`
+        if (svgEditor.i18next.language === 'de') {
+          btitle = `${svgEditor.i18next.t(`${name}:buttons.0.title`)} [Leertaste oder Mausrad + Ziehen]`
+        }
         // Add the button and its handler(s)
         const buttonTemplate = document.createElement('template')
         buttonTemplate.innerHTML = `
